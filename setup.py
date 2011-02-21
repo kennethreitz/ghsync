@@ -18,7 +18,7 @@ required = ['github2']
 
 setup(
     name='ghsync',
-    version=ghsync.__version__,
+    version='0.2.1',
     description='GitHub Syncer. Clones or Pulls all GitHub repos.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
