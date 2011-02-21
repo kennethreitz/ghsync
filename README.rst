@@ -27,7 +27,7 @@ To install it, ::
 
     $ pip install ghsync
     
-The command `ghsync` will then be available to you from the command line. 
+The command ``ghsync`` will then be available to you from the command line. 
 
 
 
