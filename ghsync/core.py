@@ -31,7 +31,7 @@ from github2.client import Github
 __author__ = 'Kenneth Reitz'
 __license__ = 'ISC'
 __copyright__ = '2011 Kenneth REitz'
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 # GitHub configurations
 GITHUB_USER = cmd('git config github.user')
