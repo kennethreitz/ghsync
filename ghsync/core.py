@@ -22,6 +22,7 @@ Inspired by Gisty (http://github.com/swdyh/gisty).
 """
 
 import os
+import sys
 from commands import getoutput as cmd
 
 from github2.client import Github
@@ -36,8 +37,13 @@ __version__ = '0.2'
 GITHUB_USER = cmd('git config github.user')
 GITHUB_TOKEN = cmd('git config github.token')
 
+GHSYNC_DIR = os.environ.get('GHSYNC_DIR', '.')
+
+
 
 def run():
+
+    os.chdir(GHSYNC_DIR)
 
     # API Object
     github = Github(username=GITHUB_USER, api_token=GITHUB_TOKEN)
