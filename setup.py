@@ -3,35 +3,29 @@
 
 import os
 import sys
-import requests
+import ghsync
 
 from distutils.core import setup
 
 
-    
-if sys.argv[-1] == "publish":
-    os.system("python setup.py sdist upload")
-    sys.exit()
 
-if sys.argv[-1] == "test":
-    os.system("python test_requests.py")
+if sys.argv[-1] == "publish":
+    os.system('python setup.py sdist upload')
     sys.exit()
     
-required = []
+required = ['github2']
 
 
 setup(
     name='ghsync',
-    version=requests.__version__,
-    description='Awesome Python HTTP Library that\'s actually usable.',
-    long_description=open('README.rst').read()
+    version=ghsync.__version__,
+    description='GitHub Syncer. Clones or Pulls all GitHub repos.',
+    long_description=open('README.rst').read(),
     author='Kenneth Reitz',
     author_email='me@kennethreitz.com',
-    url='https://github.com/kennethreitz/requests',
+    url='https://github.com/kennethreitz/ghsync',
     packages= [
-        'requests',
-        'requests.packages',
-        'requests.packages.poster'
+        'ghsync',
     ],
     install_requires=required,
     license='ISC',
@@ -41,10 +35,13 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.5',
+        # 'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        # 'Programming Language :: Python :: 3.0',
-        # 'Programming Language :: Python :: 3.1',
     ),
+    entry_points={
+        'console_scripts': [
+            'ghsync = ghsync.core:run',
+        ],
+    }  
 )
