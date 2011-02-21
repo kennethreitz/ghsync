@@ -8,12 +8,12 @@ update it via git-pull. Otherwise, it will properly clone the repo.
 It will organize your repos into the following directory structure: ::
 
     + repos
-      ├── forks    (public fork repos)
-      ├── mirrors  (public mirror repos)
-      ├── private  (private repos)
-      ├── public   (public repos)
-      ├── watched  (public watched repos)
-      └── sync.py  (this script)
+    \ +-- forks    (public fork repos)
+      +-- mirrors  (public mirror repos)
+      +-- private  (private repos)
+      +-- public   (public repos)
+      +-- watched  (public watched repos)
+      +-- sync.py  (this script)
 
 Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
 
