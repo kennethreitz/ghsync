@@ -23,12 +23,13 @@ Inspired by Gisty (http://github.com/swdyh/gisty).
 Install
 -------
 
-To install it, ::
+To install ghsync, simply run: ::
 
     $ pip install ghsync
     
-The command ``ghsync`` will then be available to you from the command line. 
+The command ``ghsync`` will then be available to you from the command line. Beware, unless you set the ``GHSYNC_DIR`` environment variable, it will add all the repos to your current directory.::
 
+    $ export GHSYNC_DIR='~/repos/'
 
 
 Contribute
