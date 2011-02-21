@@ -20,6 +20,13 @@ Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
 Inspired by Gisty (http://github.com/swdyh/gisty).
 
 
+Install
+-------
+
+To install it, ::
+
+    $ pip install ghsync
+
 
 Contribute
 ----------
