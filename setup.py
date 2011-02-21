@@ -3,7 +3,6 @@
 
 import os
 import sys
-import ghsync
 
 from distutils.core import setup
 
