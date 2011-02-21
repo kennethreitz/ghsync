@@ -14,8 +14,7 @@ It will organize your repos into the following directory structure:
   ├── mirrors  (public mirror repos)
   ├── private  (private repos)
   ├── public   (public repos)
-  ├── watched  (public watched repos)
-  └── sync.py  (this script)
+  └── watched  (public watched repos)
 
 Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
 
