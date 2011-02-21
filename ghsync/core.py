@@ -85,7 +85,7 @@ def run():
             os.chdir(org)
         
             # I own the repo
-            private = True if org in ('private', 'fork', 'mirror') else False
+            private = True if org in ('private', 'fork', 'mirror', 'public') else False
 
             # just `git pull` if it's already there
             if os.path.exists(repo.name):
