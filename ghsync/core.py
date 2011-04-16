@@ -3,8 +3,8 @@
 
 """Kenneth Reitz's GitHub Syncer
 
-This script uses the GitHub API to get a list of all forked, mirrored, public, and 
-private repos in your GitHub account. If the repo already exists locally, it will 
+This script uses the GitHub API to get a list of all forked, mirrored, public, and
+private repos in your GitHub account. If the repo already exists locally, it will
 update it via git-pull. Otherwise, it will properly clone the repo.
 
 It will organize your repos into the following directory structure:
@@ -18,7 +18,7 @@ It will organize your repos into the following directory structure:
 
 Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
 
-Inspired by Gisty (http://github.com/swdyh/gisty). 
+Inspired by Gisty (http://github.com/swdyh/gisty).
 """
 
 import os
@@ -74,18 +74,18 @@ def run():
 
     for org, repos in repos.iteritems():
         for repo in repos:
-        
+
             # create org directory (safely)
             try:
                 os.makedirs(org)
             except OSError:
                 pass
-        
+
             # enter org dir
             os.chdir(org)
-        
+
             # I own the repo
-            private = True if org in ('private', 'fork', 'mirror', 'public') else False
+            private = org in ('private', 'fork', 'mirror', 'public')
 
             # just `git pull` if it's already there
             if os.path.exists(repo.name):
@@ -100,7 +100,7 @@ def run():
                 else:
                     print('Cloning repo: %s' % (repo.name))
                     os.system('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
-        
+
             # return to base
             os.chdir('..')
             print
