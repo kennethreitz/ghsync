@@ -11,8 +11,8 @@ from distutils.core import setup
 if sys.argv[-1] == "publish":
     os.system('python setup.py sdist upload')
     sys.exit()
-    
-required = ['github2']
+
+required = ['github2', 'clint']
 
 
 setup(
@@ -42,5 +42,5 @@ setup(
         'console_scripts': [
             'ghsync = ghsync.core:run',
         ],
-    }  
+    }
 )
