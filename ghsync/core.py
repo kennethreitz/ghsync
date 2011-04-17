@@ -35,7 +35,7 @@ from github2.client import Github
 __author__ = 'Kenneth Reitz'
 __license__ = 'ISC'
 __copyright__ = '2011 Kenneth REitz'
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 # GitHub configurations
 GITHUB_USER = cmd('git config github.user')
@@ -101,7 +101,7 @@ def run():
                 repo.parent = json.loads(requests.get(_url, ).content)['repository'].get('parent')
 
 
-            if (org in only_type) or not only_type:
+            if not only_type or (org in only_type):
 
                 # just `git pull` if it's already there
                 if os.path.exists(repo.name):
