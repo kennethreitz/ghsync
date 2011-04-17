@@ -17,7 +17,7 @@ required = ['github2', 'clint', 'requests']
 
 setup(
     name='ghsync',
-    version='0.2.2',
+    version='0.3.0',
     description='GitHub Syncer. Clones or Pulls all GitHub repos.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
