@@ -25,6 +25,10 @@ import os
 import sys
 from commands import getoutput as cmd
 
+from clint import args
+from clint.textui import puts, colored, indent
+import requests
+import json
 from github2.client import Github
 
 
@@ -42,6 +46,10 @@ GHSYNC_DIR = os.environ.get('GHSYNC_DIR', '.')
 
 
 def run():
+
+    # cli flags
+    upstream_on = args.flags.contains('--upstream')
+    only_type = args.grouped.get('--only', False)
 
     os.chdir(GHSYNC_DIR)
 
@@ -85,25 +93,50 @@ def run():
             os.chdir(org)
 
             # I own the repo
-            private = org in ('private', 'fork', 'mirror', 'public')
+            is_private = (org in ('private', 'forks', 'mirror', 'public'))
+            is_fork = (org == 'forks')
 
-            # just `git pull` if it's already there
-            if os.path.exists(repo.name):
-                os.chdir(repo.name)
-                print('Updating repo: %s' % (repo.name))
-                os.system('git pull')
-                os.chdir('..')
-            else:
-                if private:
-                    print('Cloning private repo: %s' % (repo.name))
-                    os.system('git clone git@github.com:%s/%s.git' % (repo.owner, repo.name))
+            if is_fork:
+                _url = 'http://github.com/api/v2/json/repos/show/{repo.owner}/{repo.name}'.format(repo=repo)
+                repo.parent = json.loads(requests.get(_url, ).content)['repository'].get('parent')
+
+
+            if (org in only_type) or not only_type:
+
+                # just `git pull` if it's already there
+                if os.path.exists(repo.name):
+
+                    os.chdir(repo.name)
+                    puts(colored.red('Updating repo: {repo.name}'.format(repo=repo)))
+                    os.system('git pull')
+
+                    if is_fork and upstream_on:
+                        print repo.__dict__
+                        puts(colored.red('Adding upstream: {repo.parent}'.format(repo=repo)))
+                        os.system('git remote add upstream git@github.com:{repo.parent}.git'.format(repo=repo))
+
+                    os.chdir('..')
+
                 else:
-                    print('Cloning repo: %s' % (repo.name))
-                    os.system('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
+                    if is_private:
+                        puts(colored.red('Cloning private repo: {repo.name}'.format(repo=repo)))
+                        os.system('git clone git@github.com:{repo.owner}/{repo.name}.git'.format(repo=repo))
+                        print ('git clone git@github.com:%s/%s.git' % (repo.owner, repo.name))
+
+                        if is_fork and upstream_on:
+                            os.chdir(repo.name)
+                            puts(colored.red('Adding upstream: {repo.parent}'.format(repo=repo)))
+                            os.system('git remote add upstream git@github.com:{repo.parent}.git'.format(repo=repo))
+                            os.chdir('..')
+
+
+                    else:
+                        puts(colored.red('Cloning repo: {repo.name}'.format(repo=repo)))
+                        os.system('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
+                        print ('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
 
             # return to base
             os.chdir('..')
-            print
 
 if __name__ == '__main__':
     run()
