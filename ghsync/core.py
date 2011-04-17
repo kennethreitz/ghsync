@@ -101,7 +101,7 @@ def run():
                 repo.parent = json.loads(requests.get(_url, ).content)['repository'].get('parent')
 
 
-            if (org in only_type) or not only_type:
+            if not only_type or (org in only_type):
 
                 # just `git pull` if it's already there
                 if os.path.exists(repo.name):
