@@ -50,6 +50,7 @@ def run():
     # cli flags
     upstream_on = args.flags.contains('--upstream')
     only_type = args.grouped.get('--only', False)
+    organization = args[0]
 
     os.chdir(GHSYNC_DIR)
 
@@ -60,14 +61,15 @@ def run():
     # repo slots
     repos = {}
 
-    repos['watched'] = [r for r in github.repos.watching(GITHUB_USER)]
+    if not organization:
+        repos['watched'] = [r for r in github.repos.watching(GITHUB_USER)]
     repos['private'] = []
     repos['mirrors'] = []
     repos['public'] = []
     repos['forks'] = []
 
     # Collect GitHub repos via API
-    for repo in github.repos.list():
+    for repo in github.repos.list(organization):
 
         if repo.private:
             repos['private'].append(repo)
