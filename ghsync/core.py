@@ -23,13 +23,20 @@ Inspired by Gisty (http://github.com/swdyh/gisty).
 
 import os
 import sys
-from commands import getoutput as cmd
-
 from clint import args
 from clint.textui import puts, colored, indent
 import requests
 import json
 from github2.client import Github
+
+try:
+    # check_output is new in 2.7.
+    from subprocess import check_output
+    def cmd(command):
+        return check_output(command, shell=True).strip()
+except ImportError:
+    # commands is deprecated and doesn't work on Windows
+    from commands import getoutput as cmd
 
 
 __author__ = 'Kenneth Reitz'
