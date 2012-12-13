@@ -64,7 +64,7 @@ def run():
     repos = {}
 
     if not organization:
-        repos['watched'] = [r for r in github.iter_subscribed()]
+        repos['watched'] = [r for r in github.iter_subscriptions()]
     repos['private'] = []
     repos['mirrors'] = []
     repos['public'] = []
