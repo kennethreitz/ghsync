@@ -37,7 +37,7 @@ will add all the repos to your current directory.::
 Options
 -------
 
-If the ``--upsteam`` argument is passed, all forked repos will have an
+If the ``--upstream`` argument is passed, all forked repos will have an
 **upstream** remote added, pointing to their parent repo on GitHub.
 
 You can also selectively sync certian types of repos with ``--only``. If
