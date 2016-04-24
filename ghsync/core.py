@@ -3,9 +3,9 @@
 
 """Kenneth Reitz's GitHub Syncer
 
-This script uses the GitHub API to get a list of all forked, mirrored, public, and
-private repos in your GitHub account. If the repo already exists locally, it will
-update it via git-pull. Otherwise, it will properly clone the repo.
+This script uses the GitHub API to get a list of all forked, mirrored, public,
+and private repos in your GitHub account. If the repo already exists locally,
+it will update it via git-pull. Otherwise, it will properly clone the repo.
 
 It will organize your repos into the following directory structure:
 
@@ -16,22 +16,20 @@ It will organize your repos into the following directory structure:
   ├── public   (public repos)
   └── watched  (public watched repos)
 
-Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
+Requires Ian Cordasco's github3.py (http://pypi.python.org/pypi/github3.py).
 
 Inspired by Gisty (http://github.com/swdyh/gisty).
 """
 
 import os
-import sys
 from clint import args
-from clint.textui import puts, colored, indent
-import requests
-import json
-from github2.client import Github
+from clint.textui import puts, colored
+from github3 import GitHub
 
 try:
     # check_output is new in 2.7.
     from subprocess import check_output
+
     def cmd(command):
         return check_output(command, shell=True).strip()
 except ImportError:
@@ -51,9 +49,7 @@ GITHUB_TOKEN = cmd('git config github.token')
 GHSYNC_DIR = os.environ.get('GHSYNC_DIR', '.')
 
 
-
 def run():
-
     # cli flags
     upstream_on = args.flags.contains('--upstream')
     only_type = args.grouped.get('--only', False)
@@ -62,32 +58,30 @@ def run():
     os.chdir(GHSYNC_DIR)
 
     # API Object
-    github = Github(username=GITHUB_USER, api_token=GITHUB_TOKEN)
-
+    github = GitHub(login=GITHUB_USER, token=GITHUB_TOKEN)
 
     # repo slots
     repos = {}
 
     if not organization:
-        repos['watched'] = [r for r in github.repos.watching(GITHUB_USER)]
+        repos['watched'] = [r for r in github.iter_subscriptions()]
     repos['private'] = []
     repos['mirrors'] = []
     repos['public'] = []
     repos['forks'] = []
 
     # Collect GitHub repos via API
-    for repo in github.repos.list(organization):
+    for repo in github.iter_repos(organization):
 
-        if repo.private:
+        if repo.is_private():
             repos['private'].append(repo)
-        elif repo.fork:
+        elif repo.is_fork():
             repos['forks'].append(repo)
-        elif 'mirror' in repo.description.lower():
+        elif ('mirror' in repo.description.lower()) or (repo.source):
             # mirrors owned by self if mirror in description...
             repos['mirrors'].append(repo)
         else:
             repos['public'].append(repo)
-
 
     for org, repos in repos.iteritems():
         for repo in repos:
@@ -106,9 +100,7 @@ def run():
             is_fork = (org == 'forks')
 
             if is_fork:
-                _url = 'http://github.com/api/v2/json/repos/show/{repo.owner}/{repo.name}'.format(repo=repo)
-                repo.parent = json.loads(requests.get(_url, ).content)['repository'].get('parent')
-
+                repo.refresh()
 
             if not only_type or (org in only_type):
 
@@ -116,33 +108,42 @@ def run():
                 if os.path.exists(repo.name):
 
                     os.chdir(repo.name)
-                    puts(colored.red('Updating repo: {repo.name}'.format(repo=repo)))
+                    puts(colored.red('Updating repo: {0.name}'.format(repo)))
                     os.system('git pull')
 
                     if is_fork and upstream_on:
-                        print repo.__dict__
-                        puts(colored.red('Adding upstream: {repo.parent}'.format(repo=repo)))
-                        os.system('git remote add upstream git@github.com:{repo.parent}.git'.format(repo=repo))
+                        #print repo.__dict__
+                        puts(colored.red(
+                            'Adding upstream: {0.parent}'.format(repo)))
+                        os.system('git remote add upstream {0}'.format(
+                            repo.parent.git_url
+                            ))
 
                     os.chdir('..')
 
                 else:
                     if is_private:
-                        puts(colored.red('Cloning private repo: {repo.name}'.format(repo=repo)))
-                        os.system('git clone git@github.com:{repo.owner}/{repo.name}.git'.format(repo=repo))
-                        print ('git clone git@github.com:%s/%s.git' % (repo.owner, repo.name))
+                        puts(colored.red(
+                        'Cloning private repo: {repo.name}'.format(
+                            repo=repo)))
+                        os.system('git clone {0}'.format(repo.ssh_url))
+                        print('git clone {0}'.format(repo.ssh_url))
 
                         if is_fork and upstream_on:
                             os.chdir(repo.name)
-                            puts(colored.red('Adding upstream: {repo.parent}'.format(repo=repo)))
-                            os.system('git remote add upstream git@github.com:{repo.parent}.git'.format(repo=repo))
+                            puts(colored.red('Adding upstream: {0}'.format(
+                                repo.parent.name
+                                )))
+                            os.system('git remote add upstream {0}'.format(
+                                repo.parent.git_url
+                                ))
                             os.chdir('..')
 
-
                     else:
-                        puts(colored.red('Cloning repo: {repo.name}'.format(repo=repo)))
-                        os.system('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
-                        print ('git clone git://github.com/%s/%s.git' % (repo.owner, repo.name))
+                        puts(colored.red('Cloning repo: {repo.name}'.format(
+                            repo=repo)))
+                        os.system('git clone {0}'.format(repo.git_url))
+                        print ('git clone {0}'.format(repo.git_url))
 
             # return to base
             os.chdir('..')

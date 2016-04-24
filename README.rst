@@ -16,7 +16,7 @@ It will organize your repos into the following directory structure: ::
       +-- watched  (public watched repos)
 
 
-Requires Ask Solem's github2 (http://pypi.python.org/pypi/github2).
+Requires Ian Cordasco's github3.py (http://pypi.python.org/pypi/github3.py).
 
 Inspired by Gisty (http://github.com/swdyh/gisty).
 
